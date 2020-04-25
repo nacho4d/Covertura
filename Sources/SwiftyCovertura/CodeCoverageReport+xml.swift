@@ -7,11 +7,24 @@
 
 import Foundation
 
+extension String {
+    func contains(elementOfArray: [String]) -> Bool {
+        for element in elementOfArray {
+            if self.contains(element) {
+                return true
+            }
+        }
+        return false
+    }
+}
+
 extension CodeCoverageReport {
     
-    func generateXml(targetsToInclude: [String]?) -> (xml:String, brief:String) {
-
-        let currentDirectoryPath = FileManager.default.currentDirectoryPath
+    func generateBrief(excludedTargets: [String], excludedPackages: [String]) -> String {
+        return ""
+    }
+    
+    func coverturaXml(basePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
         
         let dtd = try! XMLDTD(contentsOf: URL(string: "http://cobertura.sourceforge.net/xml/coverage-04.dtd")!)
         dtd.name = "coverage"
@@ -35,19 +48,20 @@ extension CodeCoverageReport {
         
         let sourceElement = XMLElement(name: "sources")
         rootElement.addChild(sourceElement)
-        sourceElement.addChild(XMLElement(name: "source", stringValue: currentDirectoryPath))
+        sourceElement.addChild(XMLElement(name: "source", stringValue: basePath))
         
         let packagesElement = XMLElement(name: "packages")
         rootElement.addChild(packagesElement)
 
-        // Filter targets
-        var allFiles: [CodeCoverageReport.File]
-        if let targetsToInclude = targetsToInclude {
-            allFiles = targets.filter { return targetsToInclude.contains($0.name) }.compactMap { return $0.files }
-        } else {
-            allFiles = targets.compactMap { return $0.files }
+        // Filter out targets and packages (paths)
+        var allFiles = [CodeCoverageReport.File]()
+        for target in targets {
+            if target.name.contains(elementOfArray: excludedTargets) {
+                continue
+            }
+            // Filter packages (paths)
+            allFiles += target.files.filter { !$0.path.contains(elementOfArray: excludedPackages) }
         }
-        
         // Sort files to avoid duplicated packages
         allFiles = allFiles.sorted(by: { $0.path > $1.path })
         
@@ -57,7 +71,7 @@ extension CodeCoverageReport {
         
         for fileCoverageReport in allFiles {
             // Define file path relative to source!
-            let filePath = fileCoverageReport.path.replacingOccurrences(of: currentDirectoryPath + "/", with: "")
+            let filePath = fileCoverageReport.path.replacingOccurrences(of: basePath + "/", with: "")
             let pathComponents = filePath.split(separator: "/")
             let packageName = pathComponents[0..<pathComponents.count - 1].joined(separator: ".")
 
@@ -109,6 +123,6 @@ extension CodeCoverageReport {
             }
         }
         
-        return (doc.xmlString(options: [.nodePrettyPrint]), "")
+        return doc.xmlString(options: [.nodePrettyPrint])
     }
 }
