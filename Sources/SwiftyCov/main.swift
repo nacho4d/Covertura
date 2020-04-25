@@ -5,8 +5,8 @@
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2020/04/24.
 //
 
-import SwiftyCoverturaCore
+import SwiftyCovCore
 
-SwiftyCovertura.main()
+SwiftyCov.main()
 
 

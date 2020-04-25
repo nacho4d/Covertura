@@ -9,7 +9,7 @@ final class SwiftyCoverturaTests: XCTestCase {
         }
         let (status, std, error) = try exec("--help")
         XCTAssertEqual(status, 0)
-        XCTAssertTrue(std.starts(with: "USAGE: swifty-covertura ["))
+        XCTAssertTrue(std.starts(with: "USAGE: swiftycov ["))
         XCTAssertEqual(error, "")
     }
     
@@ -20,7 +20,7 @@ final class SwiftyCoverturaTests: XCTestCase {
         }
         let (status, std, error) = try exec("--input", "/Users/ignacio/Documents/code/nacho4d/TaggedString/xcodeTestResults.xcresult", "--list-targets")
         XCTAssertEqual(status, 0)
-        XCTAssertTrue(std.starts(with: "USAGE: swifty-covertura ["))
+        XCTAssertTrue(std.starts(with: "USAGE: swiftycov ["))
         XCTAssertEqual(error, "")
     }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SwiftyCoverturaImpl {
+struct SwiftyCovImpl {
     enum Error: Swift.Error {
         case fileNotFound
         case couldNotReadXcResultFile
@@ -20,7 +20,7 @@ struct SwiftyCoverturaImpl {
     /// Initialize instance and read coverage report into memory.
     init(inputPath: String) throws {
         self.inputPath = inputPath
-        self.coverageReport = try SwiftyCoverturaImpl.readFullReport(inputPath: inputPath)
+        self.coverageReport = try SwiftyCovImpl.readFullReport(inputPath: inputPath)
     }
     
     /// Internal initializer for testing
@@ -57,7 +57,7 @@ struct SwiftyCoverturaImpl {
             guard let data = xcrun(["xccov", "view", "--report", "--json", inputPath]) else {
                 throw Error.couldNotReadXcResultFile
             }
-            print(String(data: data, encoding: .utf8))
+            //print(String(data: data, encoding: .utf8))
             return try JSONDecoder().decode(CodeCoverageReport.self, from: data)
         } else {
             // assume is a json file

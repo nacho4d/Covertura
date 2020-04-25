@@ -9,9 +9,16 @@ import Foundation
 import ArgumentParser
 import Logging
 
-public struct SwiftyCovertura: ParsableCommand {
+public struct SwiftyCov: ParsableCommand {
     
-//    let logger = Logging(label: "com.nacho4d.swifty-covertura")
+//    let logger = Logging(label: "com.nacho4d.swiftycov")
+    
+    public static var configuration: CommandConfiguration {
+        // Override configuration to customize command name
+        var conf = CommandConfiguration()
+        conf.commandName = "swiftycov"
+        return conf
+    }
     
     public init() { }
     
@@ -43,7 +50,7 @@ public struct SwiftyCovertura: ParsableCommand {
         } else {
             path = basePath
         }
-        let covertura = try SwiftyCoverturaImpl(inputPath: input ?? "")
+        let covertura = try SwiftyCovImpl(inputPath: input ?? "")
         
 //        logger.s
         

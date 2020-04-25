@@ -7,7 +7,7 @@
 
 import XCTest
 
-@testable import SwiftyCoverturaCore
+@testable import SwiftyCovCore
 
 final class SwiftyCoverturaImplTests: XCTestCase {
     
@@ -26,7 +26,7 @@ final class SwiftyCoverturaImplTests: XCTestCase {
         }()
         
         //let input = "/Users/ignacio/Documents/code/nacho4d/TaggedString/xcodeTestResults.xcresult"
-        let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
+        let c = SwiftyCovImpl(inputPath: "whatever", coverageReport: report)
         let targets = c.listTargets()
         XCTAssertEqual(targets, ["Target1.framework", "Target2", "Target3"])
     }
@@ -34,7 +34,7 @@ final class SwiftyCoverturaImplTests: XCTestCase {
     func testListTargets2() throws {
         
         let report = try readFromExampleJson()
-        let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
+        let c = SwiftyCovImpl(inputPath: "whatever", coverageReport: report)
         let targets = c.listTargets()
         XCTAssertEqual(targets, ["Rainbow.framework", "XCResultKit.framework", "StringTagProcessorTests.xctest", "XCTestHTMLReport", "StringTagProcessor.framework"])
     }
@@ -42,7 +42,7 @@ final class SwiftyCoverturaImplTests: XCTestCase {
     func testFilterTarget() throws {
         let report = try readFromExampleJson()
         let basePath = "/Users/ignacio/Documents/code/nacho4d/TaggedString/.build/checkouts/XCTestHTMLReport/"
-        let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
+        let c = SwiftyCovImpl(inputPath: "whatever", coverageReport: report)
         let xml = c.generateXml(basePath: basePath, targetsToInclude: ["XCTestHTMLReport"], excludedPackages: [])
         print(xml)
     }
