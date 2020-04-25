@@ -10,6 +10,11 @@ import XCTest
 @testable import SwiftyCoverturaCore
 
 final class SwiftyCoverturaImplTests: XCTestCase {
+    
+    func readFromExampleJson() throws -> CodeCoverageReport {
+        let data = xcodeTestResults.data(using: .utf8)!
+        return try JSONDecoder().decode(CodeCoverageReport.self, from: data)
+    }
     func testListTargets() throws {
         
         let report: CodeCoverageReport = {
@@ -24,5 +29,21 @@ final class SwiftyCoverturaImplTests: XCTestCase {
         let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
         let targets = c.listTargets()
         XCTAssertEqual(targets, ["Target1.framework", "Target2", "Target3"])
+    }
+    
+    func testListTargets2() throws {
+        
+        let report = try readFromExampleJson()
+        let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
+        let targets = c.listTargets()
+        XCTAssertEqual(targets, ["Rainbow.framework", "XCResultKit.framework", "StringTagProcessorTests.xctest", "XCTestHTMLReport", "StringTagProcessor.framework"])
+    }
+    
+    func testFilterTarget() throws {
+        let report = try readFromExampleJson()
+        let basePath = "/Users/ignacio/Documents/code/nacho4d/TaggedString/.build/checkouts/XCTestHTMLReport/"
+        let c = SwiftyCoverturaImpl(inputPath: "whatever", coverageReport: report)
+        let xml = c.generateXml(basePath: basePath, targetsToInclude: ["XCTestHTMLReport"], excludedPackages: [])
+        print(xml)
     }
 }

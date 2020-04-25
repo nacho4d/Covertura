@@ -25,7 +25,7 @@ final class SwiftyCoverturaTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testExample", testCommand),
         //("DISABLED_testCommandListTargets", DISABLED_testCommandListTargets),
     ]
 }

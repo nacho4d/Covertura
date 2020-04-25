@@ -34,16 +34,16 @@ struct SwiftyCoverturaImpl {
     }
     
     /// Generate Covertura XML from report file.
-    func generateXml(basePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
+    func generateXml(basePath: String, targetsToInclude: [String], excludedPackages: [String]) -> String {
          return coverageReport.coverturaXml(
             basePath: basePath,
-            excludedTargets: excludedTargets,
+            targetsToInclude: targetsToInclude,
             excludedPackages: excludedPackages)
     }
     
     /// Generate a nice brief summary about all coverage
-    func generateBrief(excludedTargets: [String], excludedPackages: [String]) -> String {
-        return coverageReport.generateBrief(excludedTargets: excludedTargets, excludedPackages: excludedPackages)
+    func generateBrief(targetsToInclude: [String], excludedPackages: [String]) -> String {
+        return coverageReport.generateBrief(targetsToInclude: targetsToInclude, excludedPackages: excludedPackages)
     }
     
     static func readFullReport(inputPath: String) throws -> CodeCoverageReport {
@@ -57,6 +57,7 @@ struct SwiftyCoverturaImpl {
             guard let data = xcrun(["xccov", "view", "--report", "--json", inputPath]) else {
                 throw Error.couldNotReadXcResultFile
             }
+            print(String(data: data, encoding: .utf8))
             return try JSONDecoder().decode(CodeCoverageReport.self, from: data)
         } else {
             // assume is a json file

@@ -20,11 +20,11 @@ extension String {
 
 extension CodeCoverageReport {
     
-    func generateBrief(excludedTargets: [String], excludedPackages: [String]) -> String {
+    func generateBrief(targetsToInclude: [String], excludedPackages: [String]) -> String {
         return ""
     }
     
-    func coverturaXml(basePath rawBasePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
+    func coverturaXml(basePath rawBasePath: String, targetsToInclude: [String], excludedPackages: [String]) -> String {
         // Make sure basePath does not end with "/"
         let basePath: String
         if rawBasePath.hasSuffix("/") {
@@ -63,7 +63,7 @@ extension CodeCoverageReport {
         // Filter out targets and packages (paths)
         var allFiles = [CodeCoverageReport.File]()
         for target in targets {
-            if target.name.contains(elementOfArray: excludedTargets) {
+            if !targetsToInclude.isEmpty && !target.name.contains(elementOfArray: targetsToInclude) {
                 continue
             }
             // Filter packages (paths)
@@ -76,9 +76,11 @@ extension CodeCoverageReport {
         var currentPackageElement: XMLElement!
         var isNewPackage = false
         
-        for fileCoverageReport in allFiles {
-            // Define file path relative to source!
-            let filePath = fileCoverageReport.path.replacingOccurrences(of: basePath + "/", with: "")
+        for file in allFiles {
+            // Define file path relative to source
+            let filePath = !basePath.isEmpty && file.path.hasPrefix(basePath + "/") ?
+                    String(file.path[file.path.startIndex..<file.path.index(file.path.startIndex, offsetBy: basePath.count + 1)]):
+                    file.path
             let pathComponents = filePath.split(separator: "/")
             let packageName = pathComponents[0..<pathComponents.count - 1].joined(separator: ".")
 
@@ -93,15 +95,15 @@ extension CodeCoverageReport {
             currentPackage = packageName
             if isNewPackage {
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "name", stringValue: packageName) as! XMLNode)
-                currentPackageElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(fileCoverageReport.lineCoverage)") as! XMLNode)
+                currentPackageElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(file.lineCoverage)") as! XMLNode)
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "branch-rate", stringValue: "1.0") as! XMLNode)
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "complexity", stringValue: "0.0") as! XMLNode)
             }
             
             let classElement = XMLElement(name: "class")
-            classElement.addAttribute(XMLNode.attribute(withName: "name", stringValue: "\(packageName).\((fileCoverageReport.name as NSString).deletingPathExtension)") as! XMLNode)
+            classElement.addAttribute(XMLNode.attribute(withName: "name", stringValue: "\(packageName).\((file.name as NSString).deletingPathExtension)") as! XMLNode)
             classElement.addAttribute(XMLNode.attribute(withName: "filename", stringValue: "\(filePath)") as! XMLNode)
-            classElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(fileCoverageReport.lineCoverage)") as! XMLNode)
+            classElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(file.lineCoverage)") as! XMLNode)
             classElement.addAttribute(XMLNode.attribute(withName: "branch-rate", stringValue: "1.0") as! XMLNode)
             classElement.addAttribute(XMLNode.attribute(withName: "complexity", stringValue: "0.0") as! XMLNode)
             currentPackageElement.addChild(classElement)
@@ -109,7 +111,7 @@ extension CodeCoverageReport {
             let linesElement = XMLElement(name: "lines")
             classElement.addChild(linesElement)
             
-            for functionCoverageReport in fileCoverageReport.functions {
+            for functionCoverageReport in file.functions {
                 for index in 0..<functionCoverageReport.executableLines {
                     // Function coverage report won't be 100% reliable without parsing it by file (would need to use xccov view --file filePath currentDirectory + Build/Logs/Test/*.xccovarchive)
                     let lineElement = XMLElement(kind: .element, options: .nodeCompactEmptyElement)
