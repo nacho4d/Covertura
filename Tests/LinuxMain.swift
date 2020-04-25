@@ -3,5 +3,5 @@ import XCTest
 import TaggedStringTests
 
 var tests = [XCTestCaseEntry]()
-tests += TaggedStringTests.allTests()
+tests += SwiftyCoverturaTests.allTests()
 XCTMain(tests)

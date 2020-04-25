@@ -23,20 +23,30 @@ struct SwiftyCoverturaImpl {
         self.coverageReport = try SwiftyCoverturaImpl.readFullReport(inputPath: inputPath)
     }
     
+    /// Internal initializer for testing
+    init(inputPath: String, coverageReport: CodeCoverageReport) {
+        self.inputPath = inputPath
+        self.coverageReport = coverageReport
+    }
+    
+    func listTargets() -> [String] {
+        return coverageReport.targets.map { $0.name }
+    }
+    
     /// Generate Covertura XML from report file.
-    public func generateXml(basePath: String?, excludedTargets: [String], excludedPackages: [String]) -> String {
-        return coverageReport.coverturaXml(
-            basePath: basePath ?? FileManager.default.currentDirectoryPath,
+    func generateXml(basePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
+         return coverageReport.coverturaXml(
+            basePath: basePath,
             excludedTargets: excludedTargets,
             excludedPackages: excludedPackages)
     }
     
     /// Generate a nice brief summary about all coverage
-    public func generateBrief(excludedTargets: [String], excludedPackages: [String]) -> String {
+    func generateBrief(excludedTargets: [String], excludedPackages: [String]) -> String {
         return coverageReport.generateBrief(excludedTargets: excludedTargets, excludedPackages: excludedPackages)
     }
     
-    private static func readFullReport(inputPath: String) throws -> CodeCoverageReport {
+    static func readFullReport(inputPath: String) throws -> CodeCoverageReport {
         var isDir: ObjCBool = false
         if !FileManager.default.fileExists(atPath: inputPath, isDirectory: &isDir) {
             throw Error.fileNotFound
@@ -59,7 +69,7 @@ struct SwiftyCoverturaImpl {
     }
     
     @discardableResult
-    private static func xcrun(_ arguments: [String]) -> Data? {
+    static func xcrun(_ arguments: [String]) -> Data? {
         autoreleasepool {
             let task = Process()
             task.launchPath = "/usr/bin/xcrun"

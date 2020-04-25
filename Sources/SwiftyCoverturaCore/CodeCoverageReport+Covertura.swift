@@ -24,7 +24,14 @@ extension CodeCoverageReport {
         return ""
     }
     
-    func coverturaXml(basePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
+    func coverturaXml(basePath rawBasePath: String, excludedTargets: [String], excludedPackages: [String]) -> String {
+        // Make sure basePath does not end with "/"
+        let basePath: String
+        if rawBasePath.hasSuffix("/") {
+            basePath = String(rawBasePath[rawBasePath.startIndex..<rawBasePath.index(before: rawBasePath.endIndex)])
+        } else {
+            basePath = rawBasePath
+        }
         
         let dtd = try! XMLDTD(contentsOf: URL(string: "http://cobertura.sourceforge.net/xml/coverage-04.dtd")!)
         dtd.name = "coverage"

@@ -9,31 +9,47 @@ import XCTest
 #if os(iOS)
 #else
 #endif
-//
-//func XCTAssertAttributesAtRange(_ target: NSAttributedString, attrs expectedAttrs: [NSAttributedString.Key : Any], range expectedRange: NSRange, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
-//    expectedAttrs.forEach { (expectedKey, expectedValue) in
-//        var range: NSRange = NSRange(location: NSNotFound, length: 0)
-//        let value = target.attribute(expectedKey, at: expectedRange.location, effectiveRange: &range)
-//        
-//        // Convert range to string because I am interested in a perfect match. Location ok, length:not-ok is useless and correct message would be cumbersome
-//        XCTAssertEqual(NSStringFromRange(range), NSStringFromRange(expectedRange), message() + " Invalid range of key: \(expectedKey)", file: file, line: line)
-//        
-//        // `Any` type cannot be Asserted so it needs to be casted to a more concrete type.
-//        // Would be nice to be able to cast to Equatable ?!
-//        if let v = expectedValue as? Color {
-//            XCTAssertEqual(value as? Color, v, "\(message()) Invalid value of key: \(expectedKey) at range:\(range)", file: file, line: line)
-//        } else if let v = expectedValue as? CGFloat {
-//            XCTAssertEqual(value as? CGFloat, v, "\(message()) Invalid value of key: \(expectedKey) at range:\(range)", file: file, line: line)
-//        } else if let v = expectedValue as? Font {
-//            XCTAssertEqual(value as? Font, v, "\(message()) Invalid value of key: \(expectedKey) at range:\(range)", file: file, line: line)
-//        } else {
-//            XCTFail("Please define a new type to compare here :) ")
-//        }
-//    }
-//}
-//
-//func XCTAssertNoAttributesAtRange(_ target: NSAttributedString, range expectedRange: NSRange, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
-//    var range: NSRange = NSRange(location: NSNotFound, length: 0)
-//    let values = target.attributes(at: expectedRange.location, effectiveRange: &range)
-//    XCTAssertTrue(values.isEmpty, file: file, line: line)
-//}
+
+extension XCTest {
+    /// Returns path to the built products directory.
+    var productsDirectory: URL {
+      #if os(macOS)
+        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
+            return bundle.bundleURL.deletingLastPathComponent()
+        }
+        fatalError("couldn't find the products directory")
+      #else
+        return Bundle.main.bundleURL
+      #endif
+    }
+    
+    func exec(_ arguments: String...) throws -> (status: Int?, stdOut: String, errorOut:String) {
+        guard #available(macOS 10.13, *) else {
+            // I thould throw something here. How about linux?
+            return (-1, "", "This test required macOS 10.13 or later")
+        }
+        let binary = productsDirectory.appendingPathComponent("swifty-covertura")
+
+        let process = Process()
+        process.executableURL = binary
+
+        let stdPipe = Pipe()
+        let errorPipe = Pipe()
+        process.standardOutput = stdPipe
+        process.standardError = errorPipe
+        process.arguments = arguments
+        
+        print("Executing: \n\(binary) \(arguments.joined())")
+
+        try process.run()
+        process.waitUntilExit()
+
+        let errorData = errorPipe.fileHandleForReading.availableData
+        let error = String(data: errorData, encoding: .utf8) ?? ""
+        let stdData = stdPipe.fileHandleForReading.availableData
+        let std = String(data: stdData, encoding: .utf8) ?? ""
+        let status = Int(process.terminationStatus)
+        print("Status: \(status)\nStandard Output: \n\(std)\nStandard Error: \n\(error)")
+        return (status, std, error)
+    }
+}
