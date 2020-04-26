@@ -7,12 +7,13 @@
 
 import Foundation
 import ArgumentParser
-import XCResult
 
 public struct LLVMCovCommand: ParsableCommand {
 
     // Customized name
-    public static let configuration = CommandConfiguration(commandName: "llvmcov", abstract: "Parse *.json coverage file created by llvmcov, i.e., `swift test --enable-code-coverage` command")
+    public static let configuration = CommandConfiguration(
+        commandName: "llvmcov",
+        abstract: "Parse *.json coverage file created by llvmcov, i.e., `swift test --enable-code-coverage` command")
     
     public init() { }
     

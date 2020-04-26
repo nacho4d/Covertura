@@ -10,7 +10,7 @@ import XCTest
 
 @testable import SwiftyCovCore
 
-final class SwiftyCoverturaImplTests: XCTestCase {
+final class XCResultImplTests: XCTestCase {
     
     func readFromExampleJson() throws -> XCResultCodeCoverageReport {
         let data = xcodeTestResults.data(using: .utf8)!

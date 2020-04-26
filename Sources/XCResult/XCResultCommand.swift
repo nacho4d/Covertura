@@ -11,7 +11,9 @@ import ArgumentParser
 public struct XCResultCommand: ParsableCommand {
 
     // Customized name
-    public static let configuration = CommandConfiguration(commandName: "xcresult", abstract: "Parse *.xcresult coverage file created by xcode i.e., `xcodebuild  -project myproject.xcodeproj  -scheme myscheme.xcodeproj test-resultBundlePath myfile.xcresult -enableCodeCoverage YES` command.")
+    public static let configuration = CommandConfiguration(
+        commandName: "xcresult",
+        abstract: "Parse *.xcresult coverage file created by xcode i.e., `xcodebuild  -project myproject.xcodeproj  -scheme myscheme.xcodeproj test-resultBundlePath myfile.xcresult -enableCodeCoverage YES` command.")
     
     public init() { }
     

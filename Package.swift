@@ -25,8 +25,12 @@ let package = Package(
             .target(name: "XCResult"),
             .target(name: "LLVMCov"),
         ]),
-        .target(name: "XCResult", dependencies: []),
-        .target(name: "LLVMCov", dependencies: []),
+        .target(name: "XCResult", dependencies: [
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]),
+        .target(name: "LLVMCov", dependencies: [
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]),
         .testTarget(name: "SwiftyCovTests", dependencies: ["SwiftyCov"]),
         .testTarget(name: "SwiftyCovCoreTests", dependencies: ["SwiftyCov"]),
     ]

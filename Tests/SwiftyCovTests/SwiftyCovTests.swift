@@ -1,6 +1,6 @@
 import XCTest
 
-final class SwiftyCoverturaTests: XCTestCase {
+final class SwiftyCovTests: XCTestCase {
     
     func testCommand() throws {
         guard #available(macOS 10.13, *) else {
