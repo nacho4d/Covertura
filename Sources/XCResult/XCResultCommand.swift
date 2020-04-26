@@ -7,41 +7,28 @@
 
 import Foundation
 import ArgumentParser
-import Logging
 
-public struct SwiftyCov: ParsableCommand {
-    
-//    let logger = Logging(label: "com.nacho4d.swiftycov")
-    
-    public static var configuration: CommandConfiguration {
-        // Override configuration to customize command name
-        var conf = CommandConfiguration()
-        conf.commandName = "swiftycov"
-        return conf
-    }
+public struct XCResultCommand: ParsableCommand {
+
+    // Customized name
+    public static let configuration = CommandConfiguration(commandName: "xcresult", abstract: "Parse *.xcresult coverage file created by xcode i.e., `xcodebuild  -project myproject.xcodeproj  -scheme myscheme.xcodeproj test-resultBundlePath myfile.xcresult -enableCodeCoverage YES` command.")
     
     public init() { }
     
-    @Option(name: .shortAndLong, default: nil, help: "*.xcresult input file path")
-    var input: String?
+    @Argument(help: "*.xcresult input file path")
+    var input: String
     
-    @Option(name: .shortAndLong, default: nil, help: "covertura xml format output file path. If not provided result will be printed out to stdout")
+    @Option(name: .shortAndLong, default: nil, help: "Covertura xml format output file path. If not provided result will be printed out to stdout")
     var output: String?
     
-    @Option(name: .shortAndLong, default: ".", help: "base path. If provided all file paths will be expressed relative to this base path")
+    @Option(name: .shortAndLong, default: ".", help: "A path which all files paths will be expressed relative to. By default current directory path will be used. ")
     var basePath: String
     
-    @Option(name: .shortAndLong, help: "targets to include in result covertura.xml")
+    @Option(name: .shortAndLong, help: "Targets to include in result covertura.xml. If not provided all targets will be processed.")
     var targetsToInclude: [String]
-
-//    @Argument(help: "group of packages (paths) to exclude from result covertura.xml")
-//    var packagesToExclude: [String]
     
-    @Flag(help: "print out list of all targets in the given input file")
+    @Flag(help: "Prints a list of all targets in the given input file")
     var listTargets: Bool
-    
-    @Flag(help: "Provides more logs")
-    var verbose: Bool
     
     public func run() throws {
         let path: String
@@ -50,9 +37,7 @@ public struct SwiftyCov: ParsableCommand {
         } else {
             path = basePath
         }
-        let covertura = try SwiftyCovImpl(inputPath: input ?? "")
-        
-//        logger.s
+        let covertura = try XCResultImpl(inputPath: input)
         
         // List of targets is first
         if listTargets {
@@ -63,8 +48,8 @@ public struct SwiftyCov: ParsableCommand {
                 print("Targets found (\(targets.count)): \(targets.joined(separator: ", ")).")
             }
         }
-        
-        
+    
+        // Generate XML and brief
         let xmlString = covertura.generateXml(basePath: path, targetsToInclude: targetsToInclude, excludedPackages: [])
         if let outputPath = output, !outputPath.isEmpty {
             // write to file

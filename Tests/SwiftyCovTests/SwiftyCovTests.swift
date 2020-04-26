@@ -7,10 +7,34 @@ final class SwiftyCoverturaTests: XCTestCase {
             _ = try XCTSkipIf(true, "Test requires some functions from macOS 10.13 and above")
             return
         }
-        let (status, std, error) = try exec("--help")
+        let (status, stdOut, stdError) = try exec("--help")
         XCTAssertEqual(status, 0)
-        XCTAssertTrue(std.starts(with: "USAGE: swiftycov ["))
-        XCTAssertEqual(error, "")
+        XCTAssertTrue(stdOut.starts(with: "USAGE: swifty-cov <subcommand>"))
+        XCTAssertEqual(stdError, "")
+    }
+    
+    func testSubCommandXCResultIsInstalled() throws {
+        guard #available(macOS 10.13, *) else {
+            _ = try XCTSkipIf(true, "Test requires some functions from macOS 10.13 and above")
+            return
+        }
+        let (status, stdOut, stdError) = try exec("xcresult", "--help")
+        XCTAssertEqual(status, 0)
+        XCTAssertTrue(stdOut.starts(with: "OVERVIEW: "))
+        XCTAssertTrue(stdOut.contains("USAGE: swifty-cov xcresult <input>"))
+        XCTAssertEqual(stdError, "")
+    }
+    
+    func testSubCommandLLVMCovIsInstalled() throws {
+        guard #available(macOS 10.13, *) else {
+            _ = try XCTSkipIf(true, "Test requires some functions from macOS 10.13 and above")
+            return
+        }
+        let (status, stdOut, stdError) = try exec("llvmcov", "--help")
+        XCTAssertEqual(status, 0)
+        XCTAssertTrue(stdOut.starts(with: "OVERVIEW: "))
+        XCTAssertTrue(stdOut.contains("USAGE: swifty-cov llvmcov <input>"))
+        XCTAssertEqual(stdError, "")
     }
     
     func DISABLED_testCommandListTargets() throws {

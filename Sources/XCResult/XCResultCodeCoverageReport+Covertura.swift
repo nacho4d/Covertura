@@ -18,7 +18,7 @@ extension String {
     }
 }
 
-extension CodeCoverageReport {
+extension XCResultCodeCoverageReport {
     
     func generateBrief(targetsToInclude: [String], excludedPackages: [String]) -> String {
         return ""
@@ -61,7 +61,7 @@ extension CodeCoverageReport {
         rootElement.addChild(packagesElement)
 
         // Filter out targets and packages (paths)
-        var allFiles = [CodeCoverageReport.File]()
+        var allFiles = [XCResultCodeCoverageReport.File]()
         for target in targets {
             if !targetsToInclude.isEmpty && !target.name.contains(elementOfArray: targetsToInclude) {
                 continue

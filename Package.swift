@@ -9,7 +9,7 @@ let package = Package(
         .macOS(.v10_15)
     ],
     products: [
-        .executable(name: "swiftycov", targets: ["SwiftyCov"]),
+        .executable(name: "swifty-cov", targets: ["SwiftyCov"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.5")),
@@ -18,13 +18,15 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
-        .target(name: "SwiftyCov", dependencies: [
-            "SwiftyCovCore"
-        ]),
+        .target(name: "SwiftyCov", dependencies: ["SwiftyCovCore"]),
         .target(name: "SwiftyCovCore", dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
             .product(name: "Logging", package: "swift-log"),
+            .target(name: "XCResult"),
+            .target(name: "LLVMCov"),
         ]),
+        .target(name: "XCResult", dependencies: []),
+        .target(name: "LLVMCov", dependencies: []),
         .testTarget(name: "SwiftyCovTests", dependencies: ["SwiftyCov"]),
         .testTarget(name: "SwiftyCovCoreTests", dependencies: ["SwiftyCov"]),
     ]

@@ -23,7 +23,7 @@ extension XCTest {
       #endif
     }
     
-    func exec(_ arguments: String...) throws -> (status: Int?, stdOut: String, errorOut:String) {
+    func exec(_ arguments: String...) throws -> (status: Int?, stdOut: String, stdErr:String) {
         guard #available(macOS 10.13, *) else {
             // I thould throw something here. How about linux?
             return (-1, "", "This test required macOS 10.13 or later")
@@ -33,9 +33,9 @@ extension XCTest {
         let process = Process()
         process.executableURL = binary
 
-        let stdPipe = Pipe()
+        let outPipe = Pipe()
         let errorPipe = Pipe()
-        process.standardOutput = stdPipe
+        process.standardOutput = outPipe
         process.standardError = errorPipe
         process.arguments = arguments
         
@@ -46,10 +46,16 @@ extension XCTest {
 
         let errorData = errorPipe.fileHandleForReading.availableData
         let error = String(data: errorData, encoding: .utf8) ?? ""
-        let stdData = stdPipe.fileHandleForReading.availableData
-        let std = String(data: stdData, encoding: .utf8) ?? ""
+        let outData = outPipe.fileHandleForReading.availableData
+        let out = String(data: outData, encoding: .utf8) ?? ""
         let status = Int(process.terminationStatus)
-        print("Status: \(status)\nStandard Output: \n\(std)\nStandard Error: \n\(error)")
-        return (status, std, error)
+        print("Status: \(status)")
+        if !out.isEmpty {
+            print("Standard Output: \n\(out)")
+        }
+        if !error.isEmpty {
+            print("Standard Error: \n\(error)")
+        }
+        return (status, out, error)
     }
 }

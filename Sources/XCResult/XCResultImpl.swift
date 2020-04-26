@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SwiftyCovImpl {
+public struct XCResultImpl {
     enum Error: Swift.Error {
         case fileNotFound
         case couldNotReadXcResultFile
@@ -15,16 +15,16 @@ struct SwiftyCovImpl {
     }
     
     let inputPath: String
-    var coverageReport: CodeCoverageReport
+    var coverageReport: XCResultCodeCoverageReport
     
     /// Initialize instance and read coverage report into memory.
     init(inputPath: String) throws {
         self.inputPath = inputPath
-        self.coverageReport = try SwiftyCovImpl.readFullReport(inputPath: inputPath)
+        self.coverageReport = try XCResultImpl.readFullReport(inputPath: inputPath)
     }
     
     /// Internal initializer for testing
-    init(inputPath: String, coverageReport: CodeCoverageReport) {
+    init(inputPath: String, coverageReport: XCResultCodeCoverageReport) {
         self.inputPath = inputPath
         self.coverageReport = coverageReport
     }
@@ -46,7 +46,7 @@ struct SwiftyCovImpl {
         return coverageReport.generateBrief(targetsToInclude: targetsToInclude, excludedPackages: excludedPackages)
     }
     
-    static func readFullReport(inputPath: String) throws -> CodeCoverageReport {
+    static func readFullReport(inputPath: String) throws -> XCResultCodeCoverageReport {
         var isDir: ObjCBool = false
         if !FileManager.default.fileExists(atPath: inputPath, isDirectory: &isDir) {
             throw Error.fileNotFound
@@ -58,14 +58,14 @@ struct SwiftyCovImpl {
                 throw Error.couldNotReadXcResultFile
             }
             //print(String(data: data, encoding: .utf8))
-            return try JSONDecoder().decode(CodeCoverageReport.self, from: data)
+            return try JSONDecoder().decode(XCResultCodeCoverageReport.self, from: data)
         } else {
             // assume is a json file
             guard let url = URL(string: inputPath) else {
                 throw Error.couldNotReadJsonFile
             }
             let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode(CodeCoverageReport.self, from: data)
+            return try JSONDecoder().decode(XCResultCodeCoverageReport.self, from: data)
         }
     }
     

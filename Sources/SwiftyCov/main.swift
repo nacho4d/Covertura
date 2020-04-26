@@ -7,6 +7,6 @@
 
 import SwiftyCovCore
 
-SwiftyCov.main()
+SwiftyCovCommand.main()
 
 

@@ -3,7 +3,7 @@ import Foundation
 
 // Structure of xccov json 
 
-struct CodeCoverageReport: Codable {
+struct XCResultCodeCoverageReport: Codable {
 
     let executableLines: Int
     let targets: [Target]
