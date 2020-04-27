@@ -28,7 +28,7 @@ extension XCTest {
             // I thould throw something here. How about linux?
             return (-1, "", "This test required macOS 10.13 or later")
         }
-        let binary = productsDirectory.appendingPathComponent("swiftycov")
+        let binary = productsDirectory.appendingPathComponent("swifty-cov")
 
         let process = Process()
         process.executableURL = binary
