@@ -74,6 +74,7 @@ extension XCResultCodeCoverageReport {
         
         var currentPackage = ""
         var currentPackageElement: XMLElement!
+        var currentClassesElement: XMLElement!
         var isNewPackage = false
         
         for file in allFiles {
@@ -90,14 +91,13 @@ extension XCResultCodeCoverageReport {
             if isNewPackage {
                 currentPackageElement = XMLElement(name: "package")
                 packagesElement.addChild(currentPackageElement)
-            }
-            
-            currentPackage = packageName
-            if isNewPackage {
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "name", stringValue: packageName) as! XMLNode)
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(file.lineCoverage)") as! XMLNode)
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "branch-rate", stringValue: "1.0") as! XMLNode)
                 currentPackageElement.addAttribute(XMLNode.attribute(withName: "complexity", stringValue: "0.0") as! XMLNode)
+                currentClassesElement = XMLElement(name: "classes")
+                currentPackageElement.addChild(currentClassesElement)
+                currentPackage = packageName
             }
             
             let classElement = XMLElement(name: "class")
@@ -106,7 +106,7 @@ extension XCResultCodeCoverageReport {
             classElement.addAttribute(XMLNode.attribute(withName: "line-rate", stringValue: "\(file.lineCoverage)") as! XMLNode)
             classElement.addAttribute(XMLNode.attribute(withName: "branch-rate", stringValue: "1.0") as! XMLNode)
             classElement.addAttribute(XMLNode.attribute(withName: "complexity", stringValue: "0.0") as! XMLNode)
-            currentPackageElement.addChild(classElement)
+            currentClassesElement.addChild(classElement)
             
             let linesElement = XMLElement(name: "lines")
             classElement.addChild(linesElement)
