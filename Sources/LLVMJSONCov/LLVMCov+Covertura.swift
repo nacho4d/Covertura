@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension CodeCov {
+extension LLVMJSONCovRoot {
     
     public enum AggregateProperty: String, RawRepresentable {
         case lines
@@ -15,7 +15,7 @@ extension CodeCov {
         case instantiations
     }
 
-    public func fileCoverages(for property: AggregateProperty) -> [String: Coverage] {
+    public func fileCoverages(for property: AggregateProperty) -> [String: SummaryData] {
         return Dictionary(uniqueKeysWithValues: data
             .first!
             .files
@@ -24,8 +24,8 @@ extension CodeCov {
     }
 }
 
-extension CodeCov.File.Summary {
-    func coverage(for property: CodeCov.AggregateProperty) -> CodeCov.Coverage {
+extension LLVMJSONCovRoot.Summary {
+    func coverage(for property: LLVMJSONCovRoot.AggregateProperty) -> LLVMJSONCovRoot.SummaryData {
         switch property {
         case .lines:
             return lines
@@ -34,6 +34,16 @@ extension CodeCov.File.Summary {
         case .instantiations:
             return instantiations
         }
+    }
+}
+
+extension LLVMJSONCovRoot {
+    func summarize() -> String {
+        return ""
+    }
+    
+    func toCoverturaXML() -> String {
+        return ""
     }
 }
 

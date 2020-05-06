@@ -20,8 +20,8 @@ public struct LLVMCovCommand: ParsableCommand {
     @Argument(help: "*.json codecov input file path")
     var input: String
     
-    @Option(name: .shortAndLong, default: nil, help: "Covertura xml format output file path. If not provided result will be printed out to stdout")
-    var output: String?
+    @Option(name: .shortAndLong, default: "cobertura.xml", help: "Covertura xml format output file path. If not provided result will be printed out to stdout")
+    var output: String
     
     @Option(name: .shortAndLong, default: ".", help: "A path which all files paths will be expressed relative to. By default current directory path will be used. ")
     var basePath: String
@@ -39,16 +39,16 @@ public struct LLVMCovCommand: ParsableCommand {
         let impl = try LLVMCovImpl(inputPath: input)
     
         // Generate XML and brief
-        let xmlString = impl.generateXml(basePath: path, targetsToInclude: [], excludedPackages: [])
-        if let outputPath = output, !outputPath.isEmpty {
-            // write to file
-            let url = URL(fileURLWithPath: outputPath)
-            try xmlString.data(using: .utf8)?.write(to: url)
-            let brief = impl.generateBrief(targetsToInclude: [], excludedPackages: [])
-            print(brief)
-        } else {
-            // write xml to stdout, skip brief
-            print(xmlString)
-        }
+        let xmlData = try impl.generateXml(basePath: path, targetsToInclude: [], excludedPackages: [])
+//        if let outputPath = output, !outputPath.isEmpty {
+        // write to file
+        let url = URL(fileURLWithPath: output)
+        try xmlData.write(to: url)
+        let brief = impl.generateBrief(targetsToInclude: [], excludedPackages: [])
+        print(brief)
+//        } else {
+//            // write xml to stdout, skip brief
+//            print(xmlString)
+//        }
     }
 }

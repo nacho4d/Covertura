@@ -23,13 +23,16 @@ let package = Package(
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
             //.product(name: "Logging", package: "swift-log"),
             .target(name: "XCResult"),
-            .target(name: "LLVMCov"),
+            .target(name: "LLVMJSONCov"),
         ]),
         .target(name: "XCResult", dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
         ]),
-        .target(name: "LLVMCov", dependencies: [
+        .target(name: "LLVMJSONCov", dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .target(name: "Covertura"),
+        ]),
+        .target(name: "Covertura", dependencies: [
         ]),
         .testTarget(name: "SwiftyCovTests", dependencies: ["SwiftyCov"]),
         .testTarget(name: "SwiftyCovCoreTests", dependencies: ["SwiftyCov"]),

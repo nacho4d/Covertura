@@ -8,7 +8,7 @@
 import Foundation
 import ArgumentParser
 import XCResult
-import LLVMCov
+import LLVMJSONCov
 
 public struct SwiftyCovCommand: ParsableCommand {
     
